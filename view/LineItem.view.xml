@@ -1,0 +1,62 @@
+<mvc:View controllerName="industry.gov.au.fi.apinv.controller.LineItem" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form"
+	xmlns:footerbar="sap.ushell.ui.footerbar" xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.m.semantic"
+	xmlns:smart="sap.ui.comp.smartfield" xmlns="sap.m" xmlns:smartField="sap.ui.comp.smartfield">
+	<semantic:DetailPage id="page" navButtonPress="onNavBack" title="Line Item" busy="{viewModel>/busy}">
+		<semantic:content>
+			<Panel>
+				<f:SimpleForm class="editableForm" columnsL="1" columnsM="1" editable="true" emptySpanL="4" emptySpanM="4" id="lineItemSimpleForm"
+					labelSpanL="3" labelSpanM="3" layout="ResponsiveGridLayout" maxContainerCols="2" minWidth="1024"
+					title="{= ${viewModel>/mode} === 'edit' || ${viewModel>/mode} === 'display'? 'Edit Line Item': 'Display Line Item'}">
+					<f:content>
+						<Label text="Request ID"/>
+						<Input id="Zreqid_id" enabled="false" visible="true"
+							value="{ path: 'Zreqid', type: 'sap.ui.model.odata.type.String' , constraints:{ maxLength:10, nullable:false } }" width="7rem"/>
+						<Label text="Item Number"/>
+						<Input id="Buzei" enabled="false" visible="true"
+							value="{ path: 'Buzei', type: 'sap.ui.model.odata.type.String' , constraints:{ maxLength:10, nullable:false } }" width="3rem"/>
+						<smartField:SmartLabel labelFor="glAccount" text="G/L Account"/>
+						<smartField:SmartField value="{Saknr}" id="glAccount" width="7rem"
+							editable="{= ${itemViewModel>/mode} === 'edit' || ${itemViewModel>/mode} === 'create' ? true: false}"/>
+						<!--<smartField:SmartLabel labelFor="taxCodeItem" text="Tax Code"/>
+						<smartField:SmartField value="{Mwskz}" id="taxCodeItem" width="4rem"
+							editable="{= ${itemViewModel>/mode} === 'edit' || ${itemViewModel>/mode} === 'create' ? true: false}"/>-->
+						<Label text="Tax Code" labelFor="taxCodeItem"/>
+						<Select id="taxCodeItem" selectedKey="{Mwskz}" width="5rem" items="{path : '/ShT007aSet', filters: [{ path: 'IND', operator: 'EQ', value1: 'AP'}] }"
+							enabled="{= ${itemViewModel>/mode} === 'edit' || ${itemViewModel>/mode} === 'create' ? true: false}"
+							showSecondaryValues="true"	>
+							<items>
+								<core:ListItem key="{Mwskz}" text="{Mwskz}" additionalText="{Text1}" />
+							</items>
+						</Select>
+						<Label text="Line Item Description"/>
+						<Input id="itemDescription" enabled="{= ${itemViewModel>/mode} === 'edit' || ${itemViewModel>/mode} === 'create' ? true: false}"
+							visible="true" value="{Sgtxt}" maxLength="50"/>
+						<smartField:SmartLabel labelFor="wbsCodeItem" text="WBS"/>
+						<smartField:SmartField value="{Posid}" id="wbsCodeItem" width="10rem"
+							editable="{= ${itemViewModel>/mode} === 'edit' || ${itemViewModel>/mode} === 'create' ? true: false}" mandatory="false"/>
+						<smartField:SmartLabel labelFor="ccCodeItem" text="Cost Center"/>
+						<smartField:SmartField value="{Kostl}" id="ccCodeItem" width="10rem"
+							editable="{= ${itemViewModel>/mode} === 'edit' || ${itemViewModel>/mode} === 'create' ? true: false}" mandatory="false"/>
+						<Label text="Amount (Inc. GST)"/>
+						<Input id="amountIncGst" enabled="{= ${itemViewModel>/mode} === 'edit' || ${itemViewModel>/mode} === 'create' ? true: false}" visible="true"
+							value="{ path: 'Wrbtr' }" change="formatLintItemAmount" liveChange="lineItemAmountChange" width="10rem" type="Number" placeholder="0.00"/>
+							<Label text="Balance"/>
+									<Input value="{commonModel>/Balance}" type="Number" placeholder="0.00" width="10rem"
+										valueState="{= parseFloat(${commonModel>/Balance}) === parseFloat(0) ? 'Success':'Error'}" enabled="false" textAlign="Right"/>
+					</f:content>
+				</f:SimpleForm>
+			</Panel>
+		</semantic:content>
+		<!--		<semantic:addAction>
+			<semantic:AddAction id="addItem" enabled="{viewModel>/enableCreate}" press="onDoneItem"/>
+		</semantic:addAction>
+		<semantic:cancelAction>
+			<semantic:CancelAction id="cancel" press="onCancel"></semantic:CancelAction>
+		</semantic:cancelAction>-->
+		<semantic:customFooterContent>
+			<Button id="doneDetailButton" press="onDoneItem" text="Done" type="Accept" visible="true"/>
+			<Button id="cancelDetailButton" press="onItemCancel" text="Cancel" type="Reject"
+				visible="{= ${itemViewModel>/mode} === 'edit' || ${itemViewModel>/mode} === 'create' ? true: false}"/>
+		</semantic:customFooterContent>
+	</semantic:DetailPage>
+</mvc:View>

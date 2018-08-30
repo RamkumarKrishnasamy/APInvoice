@@ -1,0 +1,13 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" >
+								<ColumnListItem type="Navigation" id="TableColumnListItem" press="onPressTableItem">
+									<cells>
+										<Text text="{= parseFloat(${Buzei})}"/>
+										<Text text="{Saknr}"/>
+										<Text text="{Mwskz}"/>
+										<Text text="{Sgtxt}"/>
+										<Text text="{Posid}"/>
+										<Text text="{Kostl}"/>
+										<Text text="{Wrbtr}"/>
+									</cells>
+								</ColumnListItem>
+</core:FragmentDefinition>
