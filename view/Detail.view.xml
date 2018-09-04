@@ -140,7 +140,7 @@
 					<IconTabFilter id="iconTabBarFilterAttachments" icon="sap-icon://attachment" tooltip="{i18n>detailIconTabBarAttachments}">
 						<UploadCollection id="InvoiceAttachmentsCollection" maximumFilenameLength="55" maximumFileSize="10" multiple="false"
 							sameFilenameAllowed="false" noDataText="Please ensure all supporting documents are attached with the submission (including tax invoice)"
-							instantUpload="false" uploadUrl="/sap/opu/odata/sap/ZFI_AP_INVOICE_SRV/InvoiceAttachmentsSet/" change="onUploadChange"
+							noDataDescription="Use &quot;+&quot; button to upload files." instantUpload="false" uploadUrl="/sap/opu/odata/sap/ZFI_AP_INVOICE_SRV/InvoiceAttachmentsSet/" change="onUploadChange"
 							beforeUploadStarts="onBeforeUploadFile" uploadComplete="onUploadComplete" fileDeleted="onFileDeleted"
 							filenameLengthExceed="onFilenameLengthExceed" fileSizeExceed="onFileSizeExceed" typeMissmatch="onTypeMissmatch"
 							items="{ path: 'Attachments', sorter: [{ path: 'Name', descending: false, group: false }] }">
