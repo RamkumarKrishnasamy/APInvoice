@@ -42,7 +42,7 @@
 									<CheckBox text="" editable="false" selected="{VendSmb}"/>
 									<core:Title text=" "/>
 									<Label text="{= ${Ftype} === 'C'? 'Credit Note Number': 'Invoice Number'}"/>
-									<Input value="{Xblnr}" width="10rem"
+									<Input value="{Xblnr}" width="10rem" maxLength="4" 
 										editable="{parts:[{path:'Fstatus'},{path:'detailView>/mode'}], formatter:'.formatter.isEditable'}"/>
 									<Label text="Invoice Date"/>
 									<DatePicker id="invoiceDate" displayFormat="short" width="8em"
@@ -138,9 +138,9 @@
 						</VBox>
 					</IconTabFilter>
 					<IconTabFilter id="iconTabBarFilterAttachments" icon="sap-icon://attachment" tooltip="{i18n>detailIconTabBarAttachments}">
-						<UploadCollection id="InvoiceAttachmentsCollection" maximumFilenameLength="55" maximumFileSize="10" multiple="false"
+						<UploadCollection id="InvoiceAttachmentsCollection" maximumFilenameLength="120" maximumFileSize="10" multiple="false" uploadEnabled="false"
 							sameFilenameAllowed="false" noDataText="Please ensure all supporting documents are attached with the submission (including tax invoice)"
-							noDataDescription="Use &quot;+&quot; button to upload files." instantUpload="false" uploadUrl="/sap/opu/odata/sap/ZFI_AP_INVOICE_SRV/InvoiceAttachmentsSet/" change="onUploadChange"
+							noDataDescription="Use &quot;+&quot; button to upload files." instantUpload="true" uploadUrl="/sap/opu/odata/sap/ZFI_AP_INVOICE_SRV/InvoiceAttachmentsSet/" change="onUploadChange"
 							beforeUploadStarts="onBeforeUploadFile" uploadComplete="onUploadComplete" fileDeleted="onFileDeleted"
 							filenameLengthExceed="onFilenameLengthExceed" fileSizeExceed="onFileSizeExceed" typeMissmatch="onTypeMissmatch"
 							items="{ path: 'Attachments', sorter: [{ path: 'Name', descending: false, group: false }] }">

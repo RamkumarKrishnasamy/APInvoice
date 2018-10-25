@@ -534,9 +534,9 @@ sap.ui.define([
 			// abort if the  model has not been changed
 			if (!oModel.hasPendingChanges()) {
 				if (oModel.getDeferredGroups().length > 1 && oModel.getDeferredGroups().includes("InvoiceItemDeleteRequest")) {
-						
+
 					this.getModel("appView").setProperty("/busy", true);
-					
+
 					oModel.submitChanges({
 						groupId: "InvoiceItemDeleteRequest",
 						success: function(oData) {
@@ -547,7 +547,7 @@ sap.ui.define([
 							that.getModel("appView").setProperty("/busy", false);
 						}
 					});
-				}else{
+				} else {
 					that._fnUpdateSuccess(oEvent);
 				}
 				that.getModel("appView").setProperty("/busy", false);
@@ -729,19 +729,62 @@ sap.ui.define([
 
 		onBeforeUploadFile: function(oEvent) {
 			this.getModel("appView").setProperty("/busy", true);
+			var that = this;
+			var _oFileItems = oEvent.getSource().aItems;
+			$.each(_oFileItems, function(index, oFileItem) {
+				if (oEvent.getParameter("fileName") === oFileItem.getFileName()) {
+					var fileDetails = oFileItem._internalFileIdWithinDragDropArray;
+					// Add header parameter for drag and drop 
+					if (fileDetails) {
+						var oCustomerHeaderToken = new sap.m.UploadCollectionParameter({
+							name: "x-csrf-token",
+							value: that.getXsrfToken()
+						});
+						oEvent.getParameters().addHeaderParameter(oCustomerHeaderToken);
+						var oCommonModel = that.getModel("commonModel");
+						var FinalAttachSeq = oCommonModel.getProperty("/FinalAttachSeq");
+						FinalAttachSeq = parseInt(FinalAttachSeq, 10) + 10;
+						oCommonModel.setProperty("/FinalAttachSeq", FinalAttachSeq);
 
-			var tslug = oEvent.getParameters().getHeaderParameter("tslug").getValue();
+						var sLastModified = new Date(fileDetails.lastModified);
+						var dateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
+							pattern: "yyyyMMddKKmmss"
+						});
 
-			var sReqId = this.getView().getBindingContext().getProperty("Zreqid");
+						sLastModified = dateFormat.format(sLastModified, false);
 
-			var s = encodeURIComponent(sReqId) + ";" + tslug;
+						var s = encodeURIComponent(FinalAttachSeq) + ";fileName=" +
+							encodeURIComponent(fileDetails.name) + ";fileSize=" +
+							encodeURIComponent(fileDetails.size) + ";lastModified=" +
+							encodeURIComponent(sLastModified);
+						var sReqId = that.getView().getBindingContext().getProperty("Zreqid");
 
-			var c = new sap.m.UploadCollectionParameter({
-				name: "slug",
-				value: s
+						var sNewSlug = encodeURIComponent(sReqId) + ";" + s;
+
+						var c = new sap.m.UploadCollectionParameter({
+							name: "slug",
+							value: sNewSlug
+						});
+
+						oEvent.getParameters().addHeaderParameter(c);
+					} else {
+						var _tslug = oEvent.getParameters().getHeaderParameter("tslug").getValue();
+
+						var _sReqId = that.getView().getBindingContext().getProperty("Zreqid");
+
+						var _sNewSlug = encodeURIComponent(_sReqId) + ";" + _tslug;
+
+						var _c = new sap.m.UploadCollectionParameter({
+							name: "slug",
+							value: _sNewSlug
+						});
+
+						oEvent.getParameters().addHeaderParameter(_c);
+					}
+				}
+
 			});
 
-			oEvent.getParameters().addHeaderParameter(c);
 		},
 
 		onFormTypeSelect: function(oEvent) {
@@ -885,7 +928,7 @@ sap.ui.define([
 		,
 
 		onFileDeleted: function(oEvent) {
-
+			console.log("delete method is called");
 		},
 
 		onDeleteTableItem: function(oEvent) {
@@ -951,8 +994,8 @@ sap.ui.define([
 				// var lineItem = 0;
 				$.each(oTableItems, function(index, oTableItem) {
 					oTableItemContext = oTableItem.getBindingContext();
-				/*	lineItem = lineItem + 10;
-					oTableItem.getModel().setProperty("Buzei", lineItem + "", oTableItemContext);*/
+					/*	lineItem = lineItem + 10;
+						oTableItem.getModel().setProperty("Buzei", lineItem + "", oTableItemContext);*/
 					var sLineItemValue = oTableItemContext.getProperty("Wrbtr");
 					if (sLineItemValue === "" || isNaN(sLineItemValue)) {
 						sLineItemValue = 0;
@@ -1701,35 +1744,35 @@ sap.ui.define([
 						Posid: oTableItemContextObject.Posid,
 						Kostl: oTableItemContextObject.Kostl,
 						Wrbtr: oTableItemContextObject.Wrbtr,
-						Zreqid : ""
+						Zreqid: ""
 					});
 				});
 
-				 //oEntry.InvoiceItem = lineItems;
-				
+				//oEntry.InvoiceItem = lineItems;
+
 				var mParameters = {
 					groupId: "batchCreate"
 				};
-				 oModel.create("/InvoiceHeaderSet", oEntry, mParameters);
-				 	$.each(aLineItems, function(index, oLineItem) {
-						oModel.create("/InvoiceItemsSet", oLineItem, mParameters);	
-					});
-				 
+				oModel.create("/InvoiceHeaderSet", oEntry, mParameters);
+				$.each(aLineItems, function(index, oLineItem) {
+					oModel.create("/InvoiceItemsSet", oLineItem, mParameters);
+				});
+
 				oModel.submitChanges({
 					groupId: "batchCreate",
 					success: function(oData) {
 						that.getModel("appView").setProperty("/busy", false);
-						if(oData.__batchResponses[0].response){
-								
-						}else{
+						if (oData.__batchResponses[0].response) {
+
+						} else {
 							MessageToast.show("No error found, please proceed for submission.");
-	
+
 							var oMessage = new Message({
 								message: "No error found, please proceed for submission.",
 								type: MessageType.Success,
 								target: "/Dummy"
 							});
-	
+
 							sap.ui.getCore().getMessageManager().addMessages(oMessage);
 						}
 						// that.StartUpload();
